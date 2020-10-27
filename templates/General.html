@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Value Investing Assistant </title>
+
+        <!--Bootstrap CSS-->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}">
+
+        <!--Navbar Bootstrap-->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+          <a class="navbar-brand" href="#">Navigation</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item active">
+                <a class="nav-link" href="/Home">Home <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/Secteur">Classement Par Secteur</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/General">Classement Général</a>
+              </li>
+                <li class="nav-item">
+                <a class="nav-link" href="/Trieur">Trieur</a>
+              </li>
+                <li class="nav-item">
+                <a class="nav-link" href="/Explication">Explication</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+    </head>
+
+
+
+    <table class="table table-striped table-dark" >
+        <body>
+            {% for table in tables %}
+                    {{ table|safe }}
+            {% endfor %}
+        </body>
+    </table>
+
+
+
+
+</html>
+
