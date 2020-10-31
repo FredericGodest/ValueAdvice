@@ -44,8 +44,21 @@ general = table.drop(["Chiffre d'affaire",	"Evolution Rslt net %",	"Evolution Be
 
 #Energie
 energie = table[table['secteur']  == 'Energie']
+energie = energie.drop(['secteur'], axis=1)
 energie = energie.T
 energie = energie.reindex()
+
+#Pharma
+pharma = table[table['secteur']  == 'Pharma']
+pharma = pharma.drop(['secteur'], axis=1)
+pharma = pharma.T
+pharma = pharma.reindex()
+
+#Luxe
+luxe = table[table['secteur']  == 'Luxe']
+luxe = luxe.drop(['secteur'], axis=1)
+luxe= luxe.T
+luxe = luxe.reindex()
 
 app = Flask(__name__)
 
@@ -60,6 +73,14 @@ def General():
 @app.route('/Secteur/Energie', methods=['GET'])
 def Energie():
     return render_template('Energie.html', tables=[energie.to_html(header=False, index=True, classes = "table table-striped table-dark", justify="center")])
+
+@app.route('/Secteur/Pharma', methods=['GET'])
+def Pharma():
+    return render_template('Pharma.html', tables=[pharma.to_html(header=False, index=True, classes = "table table-striped table-dark", justify="center")])
+
+@app.route('/Secteur/Luxe', methods=['GET'])
+def Luxe():
+    return render_template('Luxe.html', tables=[luxe.to_html(header=False, index=True, classes = "table table-striped table-dark", justify="center")])
 
 
 
