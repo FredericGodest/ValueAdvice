@@ -53,8 +53,20 @@ table = table.sort_values(by=['Final Score'],ascending=False)
 #General
 general = table.drop(["Chiffre d'affaire",	"Evolution Rslt net %",	"Evolution Benef %" , "Evolution Marge %",	"Resultat net/CA",	"Charge/CA",	"Dividende",	"Payout Ratio",	"Evolution ROE",	"ROE",	"Evolution flux tréso",	"cours",	"rendement / 5 ans"], axis=1)
 
+#Aeronautique
+aeronautique = TransposeTable(table, 'Aeronautique')
+
+#Consommation
+consommation = TransposeTable(table, 'Consommation')
+
 #Energie
 energie = TransposeTable(table, 'Energie')
+
+#Industrie
+industrie = TransposeTable(table, 'Industrie')
+
+#Logiciel
+logiciel = TransposeTable(table, 'Logiciel')
 
 #Pharma
 pharma = TransposeTable(table, 'Pharma')
@@ -86,6 +98,21 @@ def Pharma():
 def Luxe():
     return render_template('Luxe.html', tables=[luxe.to_html(header=False, index=True, classes = "table table-striped table-dark", justify="center")])
 
+@app.route('/Secteur/Aeronautique', methods=['GET'])
+def Aeronautique():
+    return render_template('Aeronautique.html', tables=[aeronautique.to_html(header=False, index=True, classes = "table table-striped table-dark", justify="center")])
+
+@app.route('/Secteur/Consommation', methods=['GET'])
+def Consommation():
+    return render_template('Consommation.html', tables=[consommation.to_html(header=False, index=True, classes = "table table-striped table-dark", justify="center")])
+
+@app.route('/Secteur/Industrie', methods=['GET'])
+def Industrie():
+    return render_template('Industrie.html', tables=[industrie.to_html(header=False, index=True, classes = "table table-striped table-dark", justify="center")])
+
+@app.route('/Secteur/Logiciel', methods=['GET'])
+def Logiciel():
+    return render_template('Logiciel.html', tables=[logiciel.to_html(header=False, index=True, classes = "table table-striped table-dark", justify="center")])
 
 
 #BOUCLE
