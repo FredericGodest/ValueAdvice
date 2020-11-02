@@ -5,15 +5,7 @@ import pandas as pd
 import numpy as np
 import pickle
 
-f = open(r"templates/Navbar.html", "r")
-Navbar = f.read()
-
-#chargement base de données
-with open("picklesave",'rb') as f1:
-    table = pickle.load(f1)
-table = table.reset_index()
-table = table.drop(['Index', 'Adresse'], axis=1)
-
+#Fonction Perso
 def scale(table):
     table["Capital"] = table["Capital"] / 1000000
     table["Evolution CA %"] = np.round(table["Evolution CA %"] * 100, 2)
@@ -36,8 +28,24 @@ def scale(table):
     table["Score Dividende"] = np.round(table["Score Dividende"], 2)
     table["Final Score"] = np.round(table["Final Score"], 2)
     table["Cours Graham"] = np.round(table["Cours Graham"], 2)
+    table["Repartition"] = np.round(table["Repartition"], 2)
 
     return table
+
+def TransposeTable(table, secteur):
+    table2 = table[table['secteur'] == secteur]
+    table2 = table2.drop(['secteur'], axis=1)
+    table2 = table2.T
+    table2 = table2.reindex()
+
+    return table2
+
+#chargement base de données
+with open("picklesave",'rb') as f1:
+    table = pickle.load(f1)
+table = table.reset_index()
+table = table.drop(['Index', 'Adresse'], axis=1)
+
 
 table = scale(table)
 table = table.sort_values(by=['Final Score'],ascending=False)
@@ -46,22 +54,15 @@ table = table.sort_values(by=['Final Score'],ascending=False)
 general = table.drop(["Chiffre d'affaire",	"Evolution Rslt net %",	"Evolution Benef %" , "Evolution Marge %",	"Resultat net/CA",	"Charge/CA",	"Dividende",	"Payout Ratio",	"Evolution ROE",	"ROE",	"Evolution flux tréso",	"cours",	"rendement / 5 ans"], axis=1)
 
 #Energie
-energie = table[table['secteur']  == 'Energie']
-energie = energie.drop(['secteur'], axis=1)
-energie = energie.T
-energie = energie.reindex()
+energie = TransposeTable(table, 'Energie')
 
 #Pharma
-pharma = table[table['secteur']  == 'Pharma']
-pharma = pharma.drop(['secteur'], axis=1)
-pharma = pharma.T
-pharma = pharma.reindex()
+pharma = TransposeTable(table, 'Pharma')
 
 #Luxe
-luxe = table[table['secteur']  == 'Luxe']
-luxe = luxe.drop(['secteur'], axis=1)
-luxe= luxe.T
-luxe = luxe.reindex()
+luxe = TransposeTable(table, 'Luxe')
+
+
 
 app = Flask(__name__)
 
