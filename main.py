@@ -5,6 +5,9 @@ import pandas as pd
 import numpy as np
 import pickle
 
+f = open(r"templates/Navbar.html", "r")
+Navbar = f.read()
+
 #chargement base de données
 with open("picklesave",'rb') as f1:
     table = pickle.load(f1)
