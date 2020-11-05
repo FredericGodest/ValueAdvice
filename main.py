@@ -25,6 +25,7 @@ def scale(table):
     table["rendement / 5 ans"] = np.round(table["rendement / 5 ans"] * 100, 2)
 
     table["Score Value"] = np.round(table["Score Value"], 2)
+    table["Score management"] = np.round(table["Score management"], 2)
     table["Score Dividende"] = np.round(table["Score Dividende"], 2)
     table["Final Score"] = np.round(table["Final Score"], 2)
     table["Cours Graham"] = np.round(table["Cours Graham"], 2)
@@ -51,7 +52,7 @@ table = scale(table)
 table = table.sort_values(by=['Final Score'],ascending=False)
 
 #General
-general = table.drop(["Chiffre d'affaire",	"Evolution Rslt net %",	"Evolution Benef %" , "Evolution Marge %",	"Resultat net/CA",	"Charge/CA",	"Dividende",	"Payout Ratio",	"Evolution ROE",	"ROE",	"Evolution flux tréso",	"cours",	"rendement / 5 ans"], axis=1)
+general = table.drop(["Marge Brute","Rslt net / Dette long terme" , "Chiffre d'affaire",	"Effet Lindi", "Marque", "Scalabilité", "Brevet", "Pricing Power", "Vision long terme","Fiabilité de la direction" ,"Evolution Rslt net %",	"Evolution Benef %" , "Evolution Marge %",	"Resultat net/CA",	"Charge/CA",	"Dividende",	"Payout Ratio",	"Evolution ROE",	"ROE",	"Evolution flux tréso",	"cours",	"rendement / 5 ans"], axis=1)
 
 #Aeronautique
 aeronautique = TransposeTable(table, 'Aeronautique')
