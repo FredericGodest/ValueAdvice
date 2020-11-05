@@ -108,6 +108,9 @@ def Research(path):
     driver.get(path)
 
     CAPITAUX_PROPRE = []
+    DETTE_COURT = []
+    DETTE_TOTAL = []
+
 
     # cliquer sur annuel
     button = driver.find_element_by_xpath("/html/body/div[5]/section/div[8]/div[1]/a[1]")
@@ -121,11 +124,15 @@ def Research(path):
             try:
                 capitaux_propre = driver.find_element_by_xpath(
                     "/html/body/div[5]/section/div[9]/table/tbody[2]/tr[9]/td[" + str(rank) + "]")
+                dette_court = driver.find_element_by_xpath("/html/body/div[5]/section/div[9]/table/tbody[2]/tr[5]/td[" + str(rank) +"]")
+                dette_total = driver.find_element_by_xpath("/html/body/div[5]/section/div[9]/table/tbody[2]/tr[7]/td[" + str(rank) +"]")
                 break
             except:
                 pass
 
         capitaux_propre, CAPITAUX_PROPRE = STR2FLOAT(capitaux_propre, CAPITAUX_PROPRE)
+        dette_court, DETTE_COURT = STR2FLOAT(dette_court, DETTE_COURT)
+        dette_total, DETTE_TOTAL = STR2FLOAT(dette_total, DETTE_TOTAL)
 
     # balance-sheet
     path = path1 + "-cash-flow"
@@ -204,6 +211,13 @@ def Research(path):
     cours = cours.replace(',', '.')
     cours = float(cours.replace(' ', ''))
 
+    #Dette long terme
+    DETTE_COURT = np.asarray(DETTE_COURT)
+    DETTE_TOTAL = np.asarray(DETTE_TOTAL)
+    DETTE_LONG = DETTE_TOTAL - DETTE_COURT
+
+
+
     # Rendement action 5 ans
     path = path1 + "-ratios"
     driver.get(path)
@@ -225,7 +239,7 @@ def Research(path):
 
     Graham = np.sqrt(20 / 1.5 * BPA * BVPS)
 
-    return Chiffre_Affaire, prog_CA, Resultat_net, prog_RN, Charge, prog_BPA, BPA, Divid, prog_divid, Marge_brut, prog_MB, prog_Benef, prog_ROE, ROE, prog_CASH, cours, rendement, Capital, Graham
+    return Chiffre_Affaire, prog_CA, Resultat_net, prog_RN, Charge, prog_BPA, BPA, Divid, prog_divid, Marge_brut, prog_MB, prog_Benef, prog_ROE, ROE, prog_CASH, cours, rendement, Capital, Graham, DETTE_LONG
 
 def Scoring(j):
     point = 0
@@ -350,9 +364,11 @@ def Score_Dividende(j):
 
 
 a = input("Souhaites-tu tout mettre à jour ? (Y/N)")
-driver = webdriver.Chrome(PATH)
+b = input("Lancer webdriver ? (O/N)")
+if b == "O":
+    driver = webdriver.Chrome(PATH)
 
-for j in range(0, len(table)):
+for j in range(0, 2):  #len(table)
     print(table.loc[j, "Nom"])
     path = table.loc[j, "Adresse"]
 
@@ -360,7 +376,7 @@ for j in range(0, len(table)):
         if path != "" and table.loc[j, "Chiffre d'affaire"] == 0:
             POPUP()
 
-            Chiffre_Affaire, prog_CA, Resultat_net, prog_RN, Charge, prog_BPA, BPA, Divid, prog_divid, Marge_brut, prog_MB, prog_Benef, prog_ROE, ROE, prog_CASH, cours, rendement, Capital, Graham = Research(
+            Chiffre_Affaire, prog_CA, Resultat_net, prog_RN, Charge, prog_BPA, BPA, Divid, prog_divid, Marge_brut, prog_MB, prog_Benef, prog_ROE, ROE, prog_CASH, cours, rendement, Capital, Graham, DETTE_LONG = Research(
                 path)
 
             table.loc[j, "Cours Graham"] = Graham
@@ -391,6 +407,8 @@ for j in range(0, len(table)):
             table.loc[j, "rendement / 5 ans"] = rendement
 
             table.loc[j, "rendement dividende"] = Divid / cours
+
+            table.loc[j, "Rslt net / Dette long terme"] = Resultat_net/DETTE_LONG
 
             # sauvegarde
             table.to_excel(path_excel, sheet_name='Feuil1')
