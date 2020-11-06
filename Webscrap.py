@@ -7,12 +7,13 @@ import time
 import scipy.stats as sc
 import numpy as np
 import pickle
+from wallstreet import Stock
 
 
 #A REMPLIR/MODIFIER
 PATH = "/Applications/chromedriver" #SELENIUM PATH
 #path_excel=r'/Users/FredericGodest/Desktop/Finance/database.xlsx' #EXCEL PATH
-path_excel = r'/Users/FredericGodest/Google Drive/database.xlsx'
+path_excel = r'/Users/FredericGodest/Google Drive/database2.xlsx'
 
 #NE PAS MODIFIER
 options = Options()
@@ -23,16 +24,6 @@ table = table.drop(['Index'], axis=1)
 
 #driver = webdriver.Chrome(PATH)
 table = table.fillna(0)
-
-def POPUP():
-    time.sleep(1)
-    for _ in range(0, 100):
-        try:
-            button = driver.find_element_by_id("onetrust-accept-btn-handler")
-            button.click()
-            break
-        except:
-            pass
 
 def STR2FLOAT(x, Y):
     x = x.text
@@ -47,116 +38,112 @@ def STR2FLOAT(x, Y):
 
     return x, Y
 
-def Research(path):
-    # home
+def Research(path,ticker):
+    #COMPTE DE RESULTAT
     driver.get(path)
     time.sleep(1)
-    Capital = driver.find_element_by_xpath("/html/body/div[5]/section/div[9]/div[8]/span[2]")
-    Capital = Capital.text
-    Capital = Capital.replace(',', '')
-    Capital = Capital.replace('B', '0000000')
-    Capital = float(Capital.replace('M', '0000'))
 
-    # Income Statement
-    path1 = path
-    path = path1 + "-income-statement"
-    driver.get(path)
-
-    Year = [2019, 2018, 2017, 2016]
+    Year = [2015, 2016, 2017, 2018, 2019]
     CA = []
     RESULT_NET = []
     CHARGE = []
     BPA = []
-    DIVID = []
     BENEF = []
 
-    # cliquer sur annuel
-    button = driver.find_element_by_xpath("/html/body/div[5]/section/div[8]/div[1]/a[1]")
-    button.click()
-    time.sleep(1)
-
-    for i in range(0, 4):
-        rank = str(i + 2)
-
+    for i in range(0, 5):
+        rank = str(i + 1)
         while True:
             try:
-                ca = driver.find_element_by_xpath(
-                    "/html/body/div[5]/section/div[9]/table/tbody[2]/tr[1]/td[" + str(rank) + "]")
-                result_net = driver.find_element_by_xpath(
-                    "/html/body/div[5]/section/div[9]/table/tbody[2]/tr[13]/td[" + str(rank) + "]")
-                charge = driver.find_element_by_xpath(
-                    "/html/body/div[5]/section/div[9]/table/tbody[2]/tr[5]/td[" + str(rank) + "]")
-                divid = driver.find_element_by_xpath(
-                    "/html/body/div[5]/section/div[9]/table/tbody[2]/tr[26]/td[" + str(rank) + "]")
-                bpa = driver.find_element_by_xpath(
-                    "/html/body/div[5]/section/div[9]/table/tbody[2]/tr[27]/td[" + str(rank) + "]")
-                benef = driver.find_element_by_xpath(
-                    "/html/body/div[5]/section/div[9]/table/tbody[2]/tr[4]/td[" + str(rank) + "]")
+                ca = driver.find_element_by_xpath("/ html / body / div[2] / div[2] / form / div[4] / div[2] / div / div / div[3] / div[2] / table / tbody[1] / tr[1] / td[" + str(rank) + "]")
+                result_net = driver.find_element_by_xpath("/html/body/div[2]/div[2]/form/div[4]/div[2]/div/div/div[3]/div[2]/table/tbody[3]/tr[5]/td[" + str(rank) + "]")
+                charge = driver.find_element_by_xpath("/html/body/div[2]/div[2]/form/div[4]/div[2]/div/div/div[3]/div[2]/table/tbody[2]/tr[7]/td[" + str(rank) + "]")
+                bpa = driver.find_element_by_xpath("/html/body/div[2]/div[2]/form/div[4]/div[2]/div/div/div[3]/div[2]/table/tbody[5]/tr[3]/td[" + str(rank) + "]")
+                benef = driver.find_element_by_xpath("/html/body/div[2]/div[2]/form/div[4]/div[2]/div/div/div[3]/div[2]/table/tbody[4]/tr/td[" + str(rank) + "]")
                 break
             except:
+                print("erreur de chargement de données pour Resultat")
                 pass
 
         ca, CA = STR2FLOAT(ca, CA)
         result_net, RESULT_NET = STR2FLOAT(result_net, RESULT_NET)
         charge, CHARGE = STR2FLOAT(charge, CHARGE)
         bpa, BPA = STR2FLOAT(bpa, BPA)
-        divid, DIVID = STR2FLOAT(divid, DIVID)
         benef, BENEF = STR2FLOAT(benef, BENEF)
 
-    # balance-sheet
-    path = path1 + "-balance-sheet"
-    driver.get(path)
-
-    CAPITAUX_PROPRE = []
-    DETTE_COURT = []
-    DETTE_TOTAL = []
-
-
-    # cliquer sur annuel
-    button = driver.find_element_by_xpath("/html/body/div[5]/section/div[8]/div[1]/a[1]")
+    #BILAN COMPTABLE
+    # cliquer sur Bilan
+    button = driver.find_element_by_xpath("/html/body/div[2]/div[2]/form/div[4]/div[2]/div/div/div[2]/ul[3]/li[2]/a")
     button.click()
     time.sleep(1)
 
-    for i in range(0, 4):
-        rank = str(i + 2)
+    CAPITAUX_PROPRE = []
+    DETTE_LONG = []
+    TRESO = []
 
+    for i in range(0, 5):
+        rank = str(i + 1)
         while True:
             try:
-                capitaux_propre = driver.find_element_by_xpath(
-                    "/html/body/div[5]/section/div[9]/table/tbody[2]/tr[9]/td[" + str(rank) + "]")
-                dette_court = driver.find_element_by_xpath("/html/body/div[5]/section/div[9]/table/tbody[2]/tr[5]/td[" + str(rank) +"]")
-                dette_total = driver.find_element_by_xpath("/html/body/div[5]/section/div[9]/table/tbody[2]/tr[7]/td[" + str(rank) +"]")
+                capitaux_propre = driver.find_element_by_xpath("/html/body/div[2]/div[2]/form/div[4]/div[2]/div/div/div[3]/div[2]/table/tbody[2]/tr[21]/td[" + str(rank) + "]")
+                dette_long = driver.find_element_by_xpath("/html/body/div[2]/div[2]/form/div[4]/div[2]/div/div/div[3]/div[2]/table/tbody[2]/tr[11]/td["+ str(rank) +"]")
+                treso = driver.find_element_by_xpath("/html/body/div[2]/div[2]/form/div[4]/div[2]/div/div/div[3]/div[2]/table/tbody[1]/tr[4]/td["+ str(rank) +"]")
                 break
             except:
+                print("erreur de chargement de données pour Bilan")
                 pass
 
         capitaux_propre, CAPITAUX_PROPRE = STR2FLOAT(capitaux_propre, CAPITAUX_PROPRE)
-        dette_court, DETTE_COURT = STR2FLOAT(dette_court, DETTE_COURT)
-        dette_total, DETTE_TOTAL = STR2FLOAT(dette_total, DETTE_TOTAL)
+        dette_long, DETTE_LONG = STR2FLOAT(dette_long, DETTE_LONG)
+        treso, TRESO = STR2FLOAT(treso, TRESO)
 
-    # balance-sheet
-    path = path1 + "-cash-flow"
-    driver.get(path)
-
-    CASH_FLOW = []
-
-    # cliquer sur annuel
-    button = driver.find_element_by_xpath("/html/body/div[5]/section/div[8]/div[1]/a[1]")
+    #DIVIDENDE
+    # cliquer sur Bilan
+    button = driver.find_element_by_xpath("/html/body/div[2]/div[2]/form/div[4]/div[2]/div/div/div[2]/ul[3]/li[4]/a")
     button.click()
     time.sleep(1)
+    DIVID = []
 
-    for i in range(0, 4):
-        rank = str(i + 2)
-
+    for i in range(0, 10):
+        rank = str(i + 1)
         while True:
             try:
-                cashflow = driver.find_element_by_xpath(
-                    "/html/body/div[5]/section/div[9]/table/tbody[2]/tr[12]/td[" + str(rank) + "]")
+                dividende = driver.find_element_by_xpath('// *[ @ id = "HistoricalDividends"] / table / tbody / tr['+ str(rank) +'] / td[6]')
                 break
             except:
+                print("erreur de chargement de données pour Dividende")
                 pass
 
-        cashflow, CASH_FLOW = STR2FLOAT(cashflow, CASH_FLOW)
+        dividende, DIVID = STR2FLOAT(dividende, DIVID)
+
+    #Performance
+    # cliquer sur Cours
+    button = driver.find_element_by_xpath("/ html / body / div[2] / div[2] / form / div[4] / div[2] / div / div / div[2] / ul[2] / li[1] / a")
+    button.click()
+    time.sleep(2)
+
+    while True:
+        try:
+            capital = driver.find_element_by_xpath('/html/body/div[2]/div[2]/form/div[4]/div[2]/div/div/div[3]/div[2]/div[2]/div/div[1]/table/tbody/tr/td[5]')
+            capital = capital.text
+            break
+        except:
+            pass
+
+    # cliquer sur Performance
+    button = driver.find_element_by_xpath("/ html / body / div[2] / div[2] / form / div[4] / div[2] / div / div / div[2] / ul[3] / li[3] / a")
+    button.click()
+    time.sleep(2)
+
+    while True:
+        try:
+            rendement = driver.find_element_by_xpath('/html/body/div[2]/div[2]/form/div[4]/div[2]/div/div/div[3]/div[3]/table/tbody/tr/td[5]')
+            break
+        except:
+            pass
+
+    #rendement
+    rendement = rendement.text
+    rendement = float(rendement.replace(',', '.'))
 
     # Chiffre d'affaire
     droite = sc.linregress(Year, CA)
@@ -166,20 +153,17 @@ def Research(path):
     # Resultat NET
     droite = sc.linregress(Year, RESULT_NET)
     prog_RN = droite.slope / np.mean(RESULT_NET)
-    Resultat_net = np.mean(RESULT_NET)
+    rslt_net = np.mean(RESULT_NET)
+    rslt_CA = rslt_net/Chiffre_Affaire
 
     # Charge d'exploitation
     Charge = np.mean(CHARGE)
-
-    # Dividende
-    droite = sc.linregress(Year, DIVID)
-    prog_divid = droite.slope / np.mean(DIVID)
-    Divid = DIVID[3]
+    Charge = Charge/Chiffre_Affaire
 
     # BPA
     droite = sc.linregress(Year, BPA)
     prog_BPA = droite.slope / np.mean(BPA)
-    BPA = BPA[3]
+    BPA = BPA[4]
 
     # MARGE
     BENEF = np.asarray(BENEF)
@@ -201,54 +185,55 @@ def Research(path):
     prog_ROE = droite.slope / np.mean(ROE)
     ROE = np.mean(ROE)
 
-    # CASH_FLOW
-    droite = sc.linregress(Year, CASH_FLOW)
-    prog_CASH = droite.slope / np.mean(CASH_FLOW)
-
-    # cours
-    cours = driver.find_element_by_xpath("/html/body/div[5]/section/div[4]/div[1]/div[1]/div[2]/div[1]/span[1]")
-    cours = cours.text
-    cours = cours.replace(',', '.')
-    cours = float(cours.replace(' ', ''))
-
     #Dette long terme
-    DETTE_COURT = np.asarray(DETTE_COURT)
-    DETTE_TOTAL = np.asarray(DETTE_TOTAL)
-    DETTE_LONG = DETTE_TOTAL - DETTE_COURT
+    Rslt_DetteLong = rslt_net/np.mean(DETTE_LONG)
 
+    # TRESO
+    droite = sc.linregress(Year, TRESO)
+    prog_treso = droite.slope / np.mean(TRESO)
 
+    # Dividende
+    Year_divid = np.linspace(9,0,10)
+    droite = sc.linregress(Year_divid, DIVID)
+    prog_divid = droite.slope / np.mean(DIVID)
+    Divid = DIVID[0]
 
-    # Rendement action 5 ans
-    path = path1 + "-ratios"
-    driver.get(path)
-    rendement = driver.find_element_by_xpath(
-        "/html/body/div[5]/section/table/tbody/tr[16]/td/div/table/tbody/tr[2]/td[2]")
-    rendement = rendement.text
-    if rendement == '-':
-        rendement = 0
-    else:
-        rendement = rendement.replace(',', '.')
-        rendement = rendement.replace('%', '')
-        rendement = float(rendement.replace(' ', ''))
-        rendement = rendement / 100
+    #Cours
+    s = Stock(ticker)
+    cours = s.price
 
-    BVPS = driver.find_element_by_xpath("/html/body/div[5]/section/table/tbody/tr[6]/td/div/table/tbody/tr[4]/td[2]")
-    BVPS = BVPS.text
-    BVPS = BVPS.replace(',', '.')
-    BVPS = float(BVPS.replace(' ', ''))
+    table_out = {"Capital" : [capital],
+    "Chiffre d'affaire" : [Chiffre_Affaire],
+    "Evolution CA %" : [prog_CA],
+    "Evolution Rslt net %" :[prog_RN],
+    "Evolution Benef %" : [prog_Benef],
+    "Marge Brute" : [Marge_brut],
+    "Evolution Marge %" : [prog_MB],
+    "Resultat net / CA" : [rslt_CA],
+    "Rslt net / Dette long terme" : [Rslt_DetteLong],
+    "Charge / CA" : [Charge],
+    "Evolution BPA %" : [prog_BPA],
+    "Evolution Dividende %" : [prog_divid],
+    "Dividende" : [Divid],
+    "rendement dividende" : [Divid/cours],
+    "Payout Ratio" : [Divid / BPA],
+    "Evolution ROE" : [prog_ROE],
+    "ROE" : [ROE],
+    "Evolution flux tréso" : [prog_treso],
+    "cours" : [cours],
+    "Cours Graham" : [],
+    "rendement / 5 ans" : [rendement]}
 
-    Graham = np.sqrt(20 / 1.5 * BPA * BVPS)
-
-    return Chiffre_Affaire, prog_CA, Resultat_net, prog_RN, Charge, prog_BPA, BPA, Divid, prog_divid, Marge_brut, prog_MB, prog_Benef, prog_ROE, ROE, prog_CASH, cours, rendement, Capital, Graham, DETTE_LONG
+    return table_out
 
 def Scoring(j):
     point = 0
     rank = 0
 
     # price
-    rank += 1
-    if table.loc[j, "Cours Graham"] >= table.loc[j, "cours"]:
-        point += 1
+    #rank += 1
+    #if table.loc[j, "Cours Graham"] >= table.loc[j, "cours"]:
+        #point += 1
 
     # Chiffre d'affaire
     rank += 1
@@ -324,9 +309,9 @@ def Score_Dividende(j):
     rank = 0
 
     # Capitalisation
-    rank += 1
-    if table.loc[j, "Capital"] >= 2000000000:
-        point += 1
+    #rank += 1
+    #if table.loc[j, "Capital"] >= 2000000000:
+     #   point += 1
 
         # CA
     rank += 1
@@ -362,11 +347,44 @@ def Score_Dividende(j):
 
     return score
 
+def LoadingData(table,table_out):
+    table.loc[j, "Cours Graham"] = "pas encore évalué"
+    table.loc[j, "Chiffre d'affaire"] = table_out["Chiffre d'affaire"]
+    table.loc[j, "Evolution CA %"] = table_out["Evolution CA %"]
+
+    table.loc[j, "Capital"] = table_out["Capital"]
+    table.loc[j, "Evolution Rslt net %"] = table_out["Evolution Rslt net %"]
+    table.loc[j, "Resultat net/CA"] = table_out["Resultat net / CA"]
+
+    table.loc[j, "Charge/CA"] = table_out["Charge / CA"]
+
+    table.loc[j, "Evolution BPA %"] = table_out["Evolution BPA %"]
+    table.loc[j, "Evolution Dividende %"] = table_out["Evolution Dividende %"]
+    table.loc[j, "Dividende"] = table_out["Dividende"]
+    table.loc[j, "Payout Ratio"] = table_out["Payout Ratio"]
+
+    table.loc[j, "Evolution Benef %"] = table_out["Evolution Benef %"]
+    table.loc[j, "Marge Brute"] = table_out["Marge Brute"]
+    table.loc[j, "Evolution Marge %"] = table_out["Evolution Marge %"]
+
+    table.loc[j, "Evolution ROE"] = table_out["Evolution ROE"]
+    table.loc[j, "ROE"] = table_out["ROE"]
+
+    table.loc[j, "Evolution flux tréso"] = table_out["Evolution flux tréso"]
+
+    table.loc[j, "cours"] = table_out["cours"]
+    table.loc[j, "rendement / 5 ans"] = table_out["rendement / 5 ans"]
+
+    table.loc[j, "rendement dividende"] = table_out["rendement dividende"]
+
+    table.loc[j, "Rslt net / Dette long terme"] = table_out["Rslt net / Dette long terme"]
+
+    return table
+
 
 a = input("Souhaites-tu tout mettre à jour ? (Y/N)")
-b = input("Lancer webdriver ? (O/N)")
-if b == "O":
-    driver = webdriver.Chrome(PATH)
+
+driver = webdriver.Chrome(PATH)
 
 for j in range(0, 2):  #len(table)
     print(table.loc[j, "Nom"])
@@ -374,85 +392,23 @@ for j in range(0, 2):  #len(table)
 
     if a == "N":
         if path != "" and table.loc[j, "Chiffre d'affaire"] == 0:
-            POPUP()
-
-            Chiffre_Affaire, prog_CA, Resultat_net, prog_RN, Charge, prog_BPA, BPA, Divid, prog_divid, Marge_brut, prog_MB, prog_Benef, prog_ROE, ROE, prog_CASH, cours, rendement, Capital, Graham, DETTE_LONG = Research(
-                path)
-
-            table.loc[j, "Cours Graham"] = Graham
-            table.loc[j, "Chiffre d'affaire"] = Chiffre_Affaire
-            table.loc[j, "Evolution CA %"] = prog_CA
-
-            table.loc[j, "Capital"] = Capital
-            table.loc[j, "Evolution Rslt net %"] = prog_RN
-            table.loc[j, "Resultat net/CA"] = Resultat_net / Chiffre_Affaire
-
-            table.loc[j, "Charge/CA"] = Charge / Chiffre_Affaire
-
-            table.loc[j, "Evolution BPA %"] = prog_BPA
-            table.loc[j, "Evolution Dividende %"] = prog_divid
-            table.loc[j, "Dividende"] = Divid
-            table.loc[j, "Payout Ratio"] = Divid / BPA
-
-            table.loc[j, "Evolution Benef %"] = prog_Benef
-            table.loc[j, "Marge Brute"] = Marge_brut
-            table.loc[j, "Evolution Marge %"] = prog_MB
-
-            table.loc[j, "Evolution ROE"] = prog_ROE
-            table.loc[j, "ROE"] = ROE
-
-            table.loc[j, "Evolution flux tréso"] = prog_CASH
-
-            table.loc[j, "cours"] = cours
-            table.loc[j, "rendement / 5 ans"] = rendement
-
-            table.loc[j, "rendement dividende"] = Divid / cours
-
-            table.loc[j, "Rslt net / Dette long terme"] = Resultat_net/DETTE_LONG
+            ticker = table.loc[j,'Ticker']
+            table_out = Research(path,ticker)
+            table = LoadingData(table,table_out)
 
             # sauvegarde
             table.to_excel(path_excel, sheet_name='Feuil1')
 
     elif a == "Y":
         if path != "":
-            POPUP()
-
-            Chiffre_Affaire, prog_CA, Resultat_net, prog_RN, Charge, prog_BPA, BPA, Divid, prog_divid, Marge_brut, prog_MB, prog_Benef, prog_ROE, ROE, prog_CASH, cours, rendement, Capital, Graham = Research(
-                path)
-
-            table.loc[j, "Cours Graham"] = Graham
-            table.loc[j, "Chiffre d'affaire"] = Chiffre_Affaire
-            table.loc[j, "Evolution CA %"] = prog_CA
-
-            table.loc[j, "Capital"] = Capital
-            table.loc[j, "Evolution Rslt net %"] = prog_RN
-            table.loc[j, "Resultat net/CA"] = Resultat_net / Chiffre_Affaire
-
-            table.loc[j, "Charge/CA"] = Charge / Chiffre_Affaire
-
-            table.loc[j, "Evolution BPA %"] = prog_BPA
-            table.loc[j, "Evolution Dividende %"] = prog_divid
-            table.loc[j, "Dividende"] = Divid
-            table.loc[j, "Payout Ratio"] = Divid / BPA
-
-            table.loc[j, "Evolution Benef %"] = prog_Benef
-            table.loc[j, "Marge Brute"] = Marge_brut
-            table.loc[j, "Evolution Marge %"] = prog_MB
-
-            table.loc[j, "Evolution ROE"] = prog_ROE
-            table.loc[j, "ROE"] = ROE
-
-            table.loc[j, "Evolution flux tréso"] = prog_CASH
-
-            table.loc[j, "cours"] = cours
-            table.loc[j, "rendement / 5 ans"] = rendement
-
-            table.loc[j, "rendement dividende"] = Divid / cours
+            ticker = table.loc[j, 'Ticker']
+            table_out = Research(path, ticker)
+            table = LoadingData(table, table_out)
 
             # sauvegarde
             table.to_excel(path_excel, sheet_name='Feuil1')
 
-            # Etape de scoring
+    # Etape de scoring
     score = Scoring(j)
     table.loc[j, "Score Value"] = score
 
@@ -468,11 +424,11 @@ for j in range(0, 2):  #len(table)
     table.loc[j, "Repartition"] = Repartition
 
     table.to_excel(path_excel, sheet_name='Feuil1')
-    table.to_excel(r'/Users/FredericGodest/Google Drive/database.xlsx', sheet_name='Feuil1')
-    table.to_excel(r'/Users/FredericGodest/Desktop/Finance/database.xlsx', sheet_name='Feuil1')  # EXCEL PATH
+    table.to_excel(r'/Users/FredericGodest/Google Drive/database2.xlsx', sheet_name='Feuil1')
+    #table.to_excel(r'/Users/FredericGodest/Desktop/Finance/database.xlsx', sheet_name='Feuil1')  # EXCEL PATH
 
 driver.quit()
 
 # Save Pickle
-with open(r"/Users/FredericGodest/PycharmProjects/yahou invest/picklesave", 'wb') as f1:
-    pickle.dump(table, f1)
+#with open(r"/Users/FredericGodest/PycharmProjects/yahou invest/picklesave", 'wb') as f1:
+    #pickle.dump(table, f1)
