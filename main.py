@@ -1,15 +1,16 @@
 from flask import Flask, render_template, request
-
 import webbrowser
 import os
 import json
 import pandas as pd
 import numpy as np
+from wallstreet import Stock
 import pickle
+from Data import JSON
 
 #Fonction Perso
 def scale(table):
-    table["Capital"]=table["Capital"] / 1000000
+    #table["Capital"]=table["Capital"] / 1000000
     table["Evolution CA %"]=np.round(table["Evolution CA %"] * 100, 2)
     table["Evolution Rslt net %"]=np.round(table["Evolution Rslt net %"] * 100, 2)
     table["Evolution Benef %"]=np.round(table["Evolution Benef %"] * 100, 2)
@@ -30,7 +31,7 @@ def scale(table):
     table["Score management"]=np.round(table["Score management"], 2)
     table["Score Dividende"]=np.round(table["Score Dividende"], 2)
     table["Final Score"]=np.round(table["Final Score"], 2)
-    table["Cours Graham"]=np.round(table["Cours Graham"], 2)
+    #table["Cours Graham"]=np.round(table["Cours Graham"], 2)
     table["Repartition"]=np.round(table["Repartition"], 2)
 
     return table
@@ -44,11 +45,14 @@ def TransposeTable(table, secteur):
     return table2
 
 #chargement base de données
+
+path_excel = r'/Users/FredericGodest/Google Drive/database.xlsx'
+table2 = pd.read_excel(path_excel, sheet_name='Feuil1')
+
 with open("picklesave",'rb') as f1:
     table=pickle.load(f1)
 table=table.reset_index()
 table=table.drop(['Index', 'Adresse'], axis=1)
-
 
 table=scale(table)
 table=table.sort_values(by=['Final Score'],ascending=False)
@@ -96,13 +100,9 @@ def Energie():
 
 
 @app.route('/API', methods=['GET'])
-def API(table):
-    for i in range(0, len(table)):
-        table.loc[i, "cours"] = Stock(table.loc[i, "Ticker"])
-
-    table_render = table.to_json(orient="split")
-
-    return table_render
+def API():
+    tableJSON = JSON(table)
+    return tableJSON
 
 
 @app.route('/Secteur/Pharma', methods=['GET'])

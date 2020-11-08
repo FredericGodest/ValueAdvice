@@ -430,5 +430,5 @@ for j in range(0, 2):  #len(table)
 driver.quit()
 
 # Save Pickle
-#with open(r"/Users/FredericGodest/PycharmProjects/yahou invest/picklesave", 'wb') as f1:
-    #pickle.dump(table, f1)
+with open(r"/Users/FredericGodest/PycharmProjects/yahou invest/picklesave", 'wb') as f1:
+    pickle.dump(table, f1)
