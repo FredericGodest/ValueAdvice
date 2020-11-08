@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request
+
 import webbrowser
 import os
+import json
 import pandas as pd
 import numpy as np
 import pickle
@@ -91,6 +93,17 @@ def General():
 @app.route('/Secteur/Energie', methods=['GET'])
 def Energie():
     return render_template('TempTable.html', tables=[energie.to_html(header=False, index=True, classes=class_table2, justify="center")])
+
+
+@app.route('/API', methods=['GET'])
+def Energie(table):
+    for i in range(0, len(table)):
+        Stock(table.loc[i, "cours"]) = Stock(table.loc[i, "Ticker"])
+
+    table_render = table.to_json(orient="split")
+
+    return render_template(table_render)
+
 
 @app.route('/Secteur/Pharma', methods=['GET'])
 def Pharma():
