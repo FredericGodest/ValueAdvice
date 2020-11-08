@@ -96,13 +96,13 @@ def Energie():
 
 
 @app.route('/API', methods=['GET'])
-def Energie(table):
+def API(table):
     for i in range(0, len(table)):
-        Stock(table.loc[i, "cours"]) = Stock(table.loc[i, "Ticker"])
+        table.loc[i, "cours"] = Stock(table.loc[i, "Ticker"])
 
     table_render = table.to_json(orient="split")
 
-    return render_template(table_render)
+    return table_render
 
 
 @app.route('/Secteur/Pharma', methods=['GET'])
