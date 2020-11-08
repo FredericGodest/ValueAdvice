@@ -45,10 +45,6 @@ def TransposeTable(table, secteur):
     return table2
 
 #chargement base de données
-
-path_excel = r'/Users/FredericGodest/Google Drive/database.xlsx'
-table2 = pd.read_excel(path_excel, sheet_name='Feuil1')
-
 with open("picklesave",'rb') as f1:
     table=pickle.load(f1)
 table=table.reset_index()
