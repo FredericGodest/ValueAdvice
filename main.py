@@ -92,7 +92,7 @@ def General():
 
 @app.route('/Secteur/Energie', methods=['GET'])
 def Energie():
-    return render_template('TempTable.html', tables=[energie.to_html(header=False, index=True, classes=class_table2, justify="center")])
+    return render_template('TempTable.html', tables=[energie.to_html(header=False, index=True, classes=class_table, justify="center")])
 
 
 @app.route('/API', methods=['GET'])
@@ -103,27 +103,27 @@ def API():
 
 @app.route('/Secteur/Pharma', methods=['GET'])
 def Pharma():
-    return render_template('TempTable.html', tables=[pharma.to_html(header=False, index=True, classes=class_table2, justify="center")])
+    return render_template('TempTable.html', tables=[pharma.to_html(header=False, index=True, classes=class_table, justify="center")])
 
 @app.route('/Secteur/Luxe', methods=['GET'])
 def Luxe():
-    return render_template('TempTable.html', tables=[luxe.to_html(header=False, index=True, classes=class_table2,justify="center")])
+    return render_template('TempTable.html', tables=[luxe.to_html(header=False, index=True, classes=class_table,justify="center")])
 
 @app.route('/Secteur/Aeronautique', methods=['GET'])
 def Aeronautique():
-    return render_template('TempTable.html', tables=[aeronautique.to_html(header=False, index=True, classes=class_table2, justify="center")])
+    return render_template('TempTable.html', tables=[aeronautique.to_html(header=False, index=True, classes=class_table, justify="center")])
 
 @app.route('/Secteur/Consommation', methods=['GET'])
 def Consommation():
-    return render_template('TempTable.html', tables=[consommation.to_html(header=False, index=True, classes=class_table2, justify="center")])
+    return render_template('TempTable.html', tables=[consommation.to_html(header=False, index=True, classes=class_table, justify="center")])
 
 @app.route('/Secteur/Industrie', methods=['GET'])
 def Industrie():
-    return render_template('TempTable.html', tables=[industrie.to_html(header=False, index=True, classes=class_table2, justify="center")])
+    return render_template('TempTable.html', tables=[industrie.to_html(header=False, index=True, classes=class_table, justify="center")])
 
 @app.route('/Secteur/Logiciel', methods=['GET'])
 def Logiciel():
-    return render_template('TempTable.html', tables=[logiciel.to_html(header=False, index=True, classes=class_table2, justify="center")])
+    return render_template('TempTable.html', tables=[logiciel.to_html(header=False, index=True, classes=class_table, justify="center")])
 
 
 #BOUCLE
