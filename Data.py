@@ -4,8 +4,8 @@ import pandas as pd
 def JSON(table):
     #NE PAS MODIFIER
     for i in range(0, len(table)):
-        table.loc[i, "cours"] = Stock(table.loc[i, "Ticker"])
+        table.loc[i, "cours"] = Stock(table.loc[i, "Ticker"]).price
 
-    tableJSON = table.to_json(orient="split",force_ascii = False)
+    tableJSON = table.to_json(force_ascii = False, orient="table")
 
     return tableJSON
