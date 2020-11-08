@@ -6,6 +6,6 @@ def JSON(table):
     for i in range(0, len(table)):
         table.loc[i, "cours"] = Stock(table.loc[i, "Ticker"])
 
-    tableJSON = table.to_json(orient="split")
+    tableJSON = table.to_json(orient="split",force_ascii = False)
 
     return tableJSON
