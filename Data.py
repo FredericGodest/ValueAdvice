@@ -9,6 +9,4 @@ def JSON(table):
         table.loc[i, "rendement dividende"] = rendement_divid
         table.loc[i, "cours"] = cours
 
-    tableJSON = table.to_json(force_ascii = False, orient="table")
-
-    return tableJSON
+    return table

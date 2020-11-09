@@ -17,7 +17,7 @@ path_excel = r'/Users/FredericGodest/Google Drive/database2.xlsx'
 
 #NE PAS MODIFIER
 options = Options()
-options.page_load_strategy = 'normal'
+options.page_load_strategy = 'eager'
 table = pd.read_excel(path_excel, sheet_name='Feuil1')
 table = table.set_index(table["Index"],inplace = False)
 table = table.drop(['Index'], axis=1)
@@ -100,8 +100,10 @@ def Research(path,ticker):
     # cliquer sur Bilan
     button = driver.find_element_by_xpath("/html/body/div[2]/div[2]/form/div[4]/div[2]/div/div/div[2]/ul[3]/li[4]/a")
     button.click()
-    time.sleep(1)
+    time.sleep(2)
     DIVID = []
+    C = 0
+    k =0
 
     for i in range(0, 10):
         rank = str(i + 1)
@@ -110,10 +112,25 @@ def Research(path,ticker):
                 dividende = driver.find_element_by_xpath('// *[ @ id = "HistoricalDividends"] / table / tbody / tr['+ str(rank) +'] / td[6]')
                 break
             except:
-                print("erreur de chargement de données pour Dividende")
-                pass
+                if len(DIVID)>=1:
+                    C = 1
+                    break
+                else:
+                    print("erreur de chargement de données pour Dividende")
+                    time.sleep(1)
+                    k += 1
+                    if k >=4:
+                        C=1
+                        dividende = 0
+                        break
+                    else:
+                        pass
 
-        dividende, DIVID = STR2FLOAT(dividende, DIVID)
+        if C == 0:
+            dividende, DIVID = STR2FLOAT(dividende, DIVID)
+        else :
+            DIVID = [0]
+            break
 
     #Performance
     # cliquer sur Cours
@@ -143,7 +160,10 @@ def Research(path,ticker):
 
     #rendement
     rendement = rendement.text
-    rendement = float(rendement.replace(',', '.'))
+    if rendement == '-':
+        rendement = 0
+    else :
+        rendement = float(rendement.replace(',', '.'))
 
     # Chiffre d'affaire
     droite = sc.linregress(Year, CA)
@@ -193,7 +213,7 @@ def Research(path,ticker):
     prog_treso = droite.slope / np.mean(TRESO)
 
     # Dividende
-    Year_divid = np.linspace(9,0,10)
+    Year_divid = np.linspace(len(DIVID)-1,0,len(DIVID))
     droite = sc.linregress(Year_divid, DIVID)
     prog_divid = droite.slope / np.mean(DIVID)
     Divid = DIVID[0]
@@ -300,6 +320,12 @@ def Scoring(j):
     if table.loc[j, "rendement / 5 ans"] >= 0.015:
         point += 1
 
+        #dette long terme
+    rank += 1
+    if table.loc[j, "Rslt net / Dette long terme"] >= 3:
+        point += 1
+
+
     score = point / rank * 20
 
     return score
@@ -309,13 +335,16 @@ def Score_Dividende(j):
     rank = 0
 
     # Capitalisation
-    #rank += 1
-    #if table.loc[j, "Capital"] >= 2000000000:
-     #   point += 1
+    capital = table.loc[j, "Capital"].replace('Bil', '0000000')
+    capital = capital.replace("Mil","0000")
+    capital = float(capital.replace(',', ''))
+    rank += 1
+    if capital >= 2000000000:
+        point += 1
 
         # CA
     rank += 1
-    if table.loc[j, "Chiffre d'affaire"] <= 10000:
+    if table.loc[j, "Chiffre d'affaire"] >= 10000:
         point += 1
 
     # Evolution CA
@@ -325,7 +354,7 @@ def Score_Dividende(j):
 
     # Evolution Dividende
     rank += 1
-    if table.loc[j, "Evolution Dividende %"] >= 0:
+    if table.loc[j, "Evolution Dividende %"] > 0:
         point += 1
 
     # Rendement dividende
@@ -335,7 +364,7 @@ def Score_Dividende(j):
 
     # Payout Ratio
     rank += 1
-    if table.loc[j, "Payout Ratio"] <= 0.7:
+    if table.loc[j, "Payout Ratio"] <= 0.7 and table.loc[j, "Payout Ratio"] > 0:
         point += 1
 
         # rendement
@@ -384,9 +413,9 @@ def LoadingData(table,table_out):
 
 a = input("Souhaites-tu tout mettre à jour ? (Y/N)")
 
-driver = webdriver.Chrome(PATH)
+driver = webdriver.Chrome(PATH, options=options)
 
-for j in range(0, 2):  #len(table)
+for j in range(0, len(table)):  #len(table)
     print(table.loc[j, "Nom"])
     path = table.loc[j, "Adresse"]
 
@@ -415,7 +444,10 @@ for j in range(0, 2):  #len(table)
     score2 = Score_Dividende(j)
     table.loc[j, "Score Dividende"] = score2
 
-    score_final = (score * 2 + score2) / 3
+    #score3 = Score_Dividende(j)
+    score3 = table.loc[j, "Score management"]
+
+    score_final = (score * 2 + score2 + score3) / 4
     table.loc[j, "Final Score"] = score_final
 
     Repartition = (score_final / 20 * 2 - 1) * 100 / 2

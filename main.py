@@ -25,7 +25,7 @@ def scale(table):
     table["Evolution ROE"]=np.round(table["Evolution ROE"] * 100, 2)
     table["ROE"]=np.round(table["ROE"] * 100, 2)
     table["Evolution flux tréso"]=np.round(table["Evolution flux tréso"] * 100, 2)
-    table["rendement / 5 ans"]=np.round(table["rendement / 5 ans"] * 100, 2)
+    table["rendement / 5 ans"]=np.round(table["rendement / 5 ans"], 2)
 
     table["Score Value"]=np.round(table["Score Value"], 2)
     table["Score management"]=np.round(table["Score management"], 2)
@@ -37,10 +37,10 @@ def scale(table):
     return table
 
 def TransposeTable(table, secteur):
-    table2=table[table['secteur'] == secteur]
-    table2=table2.drop(['secteur'], axis=1)
-    table2=table2.T
-    table2=table2.reindex()
+    table2 = table[table['secteur'] == secteur]
+    table2 = table2.drop(['secteur'], axis=1)
+    table2 = table2.T
+    table2 = table2.reindex()
 
     return table2
 
@@ -98,7 +98,7 @@ def Energie():
 @app.route('/API', methods=['GET'])
 def API():
     tableJSON = JSON(table)
-    return tableJSON
+    return tableJSON.to_json(force_ascii=False, orient="table")
 
 
 @app.route('/Secteur/Pharma', methods=['GET'])
