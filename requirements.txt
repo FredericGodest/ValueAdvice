@@ -4,6 +4,7 @@ chardet==3.0.4
 click==7.1.2
 et-xmlfile==1.0.1
 Flask==1.1.2
+Flask-Cors==3.0.9
 googlefinance==0.7
 googlefinance.get==0.4.9
 gunicorn==20.0.4

@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+from flask_cors import CORS, cross_origin
 import webbrowser
 import os
 import json
@@ -6,7 +7,7 @@ import pandas as pd
 import numpy as np
 from wallstreet import Stock
 import pickle
-from Data import JSON
+from Data import Update, UpdateTranspose
 
 #Fonction Perso
 def scale(table):
@@ -38,6 +39,7 @@ def scale(table):
 
 def TransposeTable(table, secteur):
     table2 = table[table['secteur'] == secteur]
+    table2 = Update(table2)
     table2 = table2.drop(['secteur'], axis=1)
     table2 = table2.T
     table2 = table2.reindex()
@@ -49,38 +51,18 @@ with open("picklesave",'rb') as f1:
     table=pickle.load(f1)
 table=table.reset_index()
 table=table.drop(['Index', 'Adresse'], axis=1)
-
 table=scale(table)
 table=table.sort_values(by=['Final Score'],ascending=False)
 
 #General
 general=table.drop(["Marge Brute","Rslt net / Dette long terme" , "Chiffre d'affaire",	"Effet Lindi", "Marque", "Scalabilité", "Brevet", "Pricing Power", "Vision long terme","Fiabilité de la direction" ,"Evolution Rslt net %",	"Evolution Benef %" , "Evolution Marge %",	"Resultat net/CA",	"Charge/CA",	"Dividende",	"Payout Ratio",	"Evolution ROE",	"ROE",	"Evolution flux tréso",	"cours",	"rendement / 5 ans"], axis=1)
 
-#Aeronautique
-aeronautique=TransposeTable(table, 'Aeronautique')
-
-#Consommation
-consommation=TransposeTable(table, 'Consommation')
-
-#Energie
-energie=TransposeTable(table, 'Energie')
-
-#Industrie
-industrie=TransposeTable(table, 'Industrie')
-
-#Logiciel
-logiciel=TransposeTable(table, 'Logiciel')
-
-#Pharma
-pharma=TransposeTable(table, 'Pharma')
-
-#Luxe
-luxe=TransposeTable(table, 'Luxe')
-
 class_table="table table-striped table-dark table-responsive"
 class_table2="table table-striped table-dark"
 
 app=Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route('/', methods=['GET'])
 def Home():
@@ -92,39 +74,45 @@ def General():
 
 @app.route('/Secteur/Energie', methods=['GET'])
 def Energie():
+    energie = TransposeTable(table, 'Energie')
     return render_template('TempTable.html', tables=[energie.to_html(header=False, index=True, classes=class_table, justify="center")])
-
-
-@app.route('/API', methods=['GET'])
-def API():
-    tableJSON = JSON(table)
-    return tableJSON.to_json(force_ascii=False, orient="table")
-
 
 @app.route('/Secteur/Pharma', methods=['GET'])
 def Pharma():
+    pharma = TransposeTable(table, 'Pharma')
     return render_template('TempTable.html', tables=[pharma.to_html(header=False, index=True, classes=class_table, justify="center")])
 
 @app.route('/Secteur/Luxe', methods=['GET'])
 def Luxe():
+    luxe = TransposeTable(table, 'Luxe')
     return render_template('TempTable.html', tables=[luxe.to_html(header=False, index=True, classes=class_table,justify="center")])
 
 @app.route('/Secteur/Aeronautique', methods=['GET'])
 def Aeronautique():
+    aeronautique=TransposeTable(table, 'Aeronautique')
     return render_template('TempTable.html', tables=[aeronautique.to_html(header=False, index=True, classes=class_table, justify="center")])
 
 @app.route('/Secteur/Consommation', methods=['GET'])
 def Consommation():
+    consommation = TransposeTable(table, 'Consommation')
     return render_template('TempTable.html', tables=[consommation.to_html(header=False, index=True, classes=class_table, justify="center")])
 
 @app.route('/Secteur/Industrie', methods=['GET'])
 def Industrie():
+    industrie = TransposeTable(table, 'Industrie')
     return render_template('TempTable.html', tables=[industrie.to_html(header=False, index=True, classes=class_table, justify="center")])
 
 @app.route('/Secteur/Logiciel', methods=['GET'])
 def Logiciel():
+    logiciel = TransposeTable(table, 'Logiciel')
     return render_template('TempTable.html', tables=[logiciel.to_html(header=False, index=True, classes=class_table, justify="center")])
 
+
+@app.route('/API', methods=['GET'])
+@cross_origin()
+def API():
+    tableJSON = Update(table)
+    return tableJSON.to_json(force_ascii=False, orient="table")
 
 #BOUCLE
 if __name__ == "__main__":

@@ -230,7 +230,7 @@ def Research(path,ticker):
     "Marge Brute" : [Marge_brut],
     "Evolution Marge %" : [prog_MB],
     "Resultat net / CA" : [rslt_CA],
-    "Rslt net / Dette long terme" : [Rslt_DetteLong],
+    "Dette long terme / Rslt net" : [Rslt_DetteLong],
     "Charge / CA" : [Charge],
     "Evolution BPA %" : [prog_BPA],
     "Evolution Dividende %" : [prog_divid],
@@ -322,7 +322,7 @@ def Scoring(j):
 
         #dette long terme
     rank += 1
-    if table.loc[j, "Rslt net / Dette long terme"] >= 3:
+    if table.loc[j, "Dette long terme / Rslt net"] <= 3:
         point += 1
 
 
@@ -389,7 +389,10 @@ def LoadingData(table,table_out):
 
     table.loc[j, "Evolution BPA %"] = table_out["Evolution BPA %"]
     table.loc[j, "Evolution Dividende %"] = table_out["Evolution Dividende %"]
-    table.loc[j, "Dividende"] = table_out["Dividende"]
+    if table.loc[j, "Eligibilité"] != "PEA":
+        table.loc[j, "Dividende"] = table_out["Dividende"] * 0.70
+    else:
+        table.loc[j, "Dividende"] = table_out["Dividende"]
     table.loc[j, "Payout Ratio"] = table_out["Payout Ratio"]
 
     table.loc[j, "Evolution Benef %"] = table_out["Evolution Benef %"]
@@ -404,9 +407,9 @@ def LoadingData(table,table_out):
     table.loc[j, "cours"] = table_out["cours"]
     table.loc[j, "rendement / 5 ans"] = table_out["rendement / 5 ans"]
 
-    table.loc[j, "rendement dividende"] = table_out["rendement dividende"]
+    table.loc[j, "rendement dividende"] = table.loc[j, "Dividende"] / table.loc[j, "cours"]
 
-    table.loc[j, "Rslt net / Dette long terme"] = table_out["Rslt net / Dette long terme"]
+    table.loc[j, "Dette long terme / Rslt net"] = table_out["Dette long terme / Rslt net"]
 
     return table
 
