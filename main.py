@@ -138,7 +138,7 @@ class HelloWorld(Resource):
         Data = Data.to_json(force_ascii=False, orient="table")
         return Data
 
-api.add_resource(HelloWorld, '/')
+api.add_resource(HelloWorld, '/DATA')
 
 
 #BOUCLE
