@@ -19,7 +19,6 @@ Jinja2==2.11.2
 kiwisolver==1.3.1
 lxml==4.6.1
 MarkupSafe==1.1.1
-matplotlib==3.3.2
 morningstar==0.3.1
 multitasking==0.0.9
 numpy==1.19.1
