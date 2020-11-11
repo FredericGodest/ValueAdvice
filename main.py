@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request
 from flask_cors import CORS, cross_origin
 import webbrowser
 import os
@@ -8,10 +8,6 @@ import numpy as np
 from wallstreet import Stock
 import pickle
 from Data import Update, UpdateTranspose
-from Historic import DATA
-import json
-
-from flask_restful import Resource, request, Api #import request from flask restful
 
 #Fonction Perso
 def scale(table):
@@ -65,11 +61,8 @@ class_table="table table-striped table-dark table-responsive"
 class_table2="table table-striped table-dark"
 
 app=Flask(__name__)
-api = Api(app)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
-
-list_ticker = table['Ticker'].values.tolist()
 
 @app.route('/', methods=['GET'])
 def Home():
@@ -120,26 +113,6 @@ def Logiciel():
 def API():
     tableJSON = Update(table)
     return tableJSON.to_json(force_ascii=False, orient="table")
-
-@app.route('/Historic', methods=['POST'])
-@cross_origin()
-def Historic():
-    args = request.args
-
-    tableJSON = DATA(list_ticker)
-    return args
-
-#tableJSON.to_json(force_ascii=False, orient="table")
-class HelloWorld(Resource):
-    def get(self):
-        raw_list = str(request.args.get("compagnie"))
-        list = raw_list.split(",")
-        Data = DATA(list)
-        Data = Data.to_json(force_ascii=False, orient="table")
-        return Data
-
-api.add_resource(HelloWorld, '/Hello')
-
 
 #BOUCLE
 if __name__ == "__main__":
