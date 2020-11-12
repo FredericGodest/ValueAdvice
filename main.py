@@ -138,18 +138,19 @@ class SIMUL(Resource):
         Ticker_list = raw_list.split(",")
         raw_list = str(request.args.get("weight"))
         Weight_list = raw_list.split(",")
+        montant = float(request.args.get("montant"))
 
         new_Weight_list = []
         for item in Weight_list:
             new_Weight_list.append(float(item))
 
-        Data = SIMULATEUR(Ticker_list, new_Weight_list)
+        Data = SIMULATEUR(Ticker_list, new_Weight_list, montant)
         Data = Data.to_json(force_ascii=False, orient="table")
         return Data
 
 api.add_resource(SIMUL, '/SIMULATEUR')
 
-#SIMULATEUR?compagnie=GTT.PA,OR.PA&weight2=0.5,0.5
+#SIMULATEUR?compagnie=GTT.PA,OR.PA&weight=50,50&montant=10000
 
 #BOUCLE
 if __name__ == "__main__":

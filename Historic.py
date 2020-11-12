@@ -13,8 +13,7 @@ def DATA(Ticker_list):
 
     return DataFrame
 
-def SIMULATEUR(Ticker_list, Weight_list):
-    montant = 10000
+def SIMULATEUR(Ticker_list, Weight_list, montant):
     Ticker_list.append('^FCHI')
     Ticker_list.append('^GSPC')
     Weight_list.append(1)
