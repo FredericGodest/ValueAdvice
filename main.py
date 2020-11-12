@@ -134,11 +134,11 @@ api.add_resource(DATA_Histo, '/DATA')
 
 class SIMUL(Resource):
     def get(self):
-        raw_list = str(request.args.get("compagnie"))
+        raw_list = str(request.args.get("compagny"))
         Ticker_list = raw_list.split(",")
         raw_list = str(request.args.get("weight"))
         Weight_list = raw_list.split(",")
-        montant = float(request.args.get("montant"))
+        montant = float(request.args.get("amount"))
 
         new_Weight_list = []
         for item in Weight_list:
@@ -150,7 +150,7 @@ class SIMUL(Resource):
 
 api.add_resource(SIMUL, '/SIMULATEUR')
 
-#SIMULATEUR?compagnie=GTT.PA,OR.PA&weight=50,50&montant=10000
+#/SIMULATEUR?compagny=GTT.PA,OR.PA&weight=50,50&amount=10000
 
 #BOUCLE
 if __name__ == "__main__":
