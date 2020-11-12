@@ -141,8 +141,11 @@ class SIMUL(Resource):
         montant = float(request.args.get("amount"))
 
         new_Weight_list = []
+        i=0
         for item in Weight_list:
             new_Weight_list.append(float(item))
+            new_Weight_list[i] = new_Weight_list[i]/100
+            i+=1
 
         Data = SIMULATEUR(Ticker_list, new_Weight_list, montant)
         Data = Data.to_json(force_ascii=False, orient="table")
