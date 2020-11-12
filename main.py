@@ -8,7 +8,7 @@ import numpy as np
 from wallstreet import Stock
 import pickle
 from Data import Update, UpdateTranspose
-from Historic import DATA
+from Historic import DATA, SIMULATEUR
 import json
 
 from flask_restful import Resource, request, Api #import request from flask restful
@@ -121,16 +121,8 @@ def API():
     tableJSON = Update(table)
     return tableJSON.to_json(force_ascii=False, orient="table")
 
-@app.route('/Historic', methods=['POST'])
-@cross_origin()
-def Historic():
-    args = request.args
 
-    tableJSON = DATA(list_ticker)
-    return args
-
-#tableJSON.to_json(force_ascii=False, orient="table")
-class HelloWorld(Resource):
+class DATA_Histo(Resource):
     def get(self):
         raw_list = str(request.args.get("compagnie"))
         list = raw_list.split(",")
@@ -138,8 +130,26 @@ class HelloWorld(Resource):
         Data = Data.to_json(force_ascii=False, orient="table")
         return Data
 
-api.add_resource(HelloWorld, '/DATA')
+api.add_resource(DATA_Histo, '/DATA')
 
+class SIMUL(Resource):
+    def get(self):
+        raw_list = str(request.args.get("compagnie"))
+        Ticker_list = raw_list.split(",")
+        raw_list = str(request.args.get("weight"))
+        Weight_list = raw_list.split(",")
+
+        new_Weight_list = []
+        for item in Weight_list:
+            new_Weight_list.append(float(item))
+
+        Data = SIMULATEUR(Ticker_list, new_Weight_list)
+        Data = Data.to_json(force_ascii=False, orient="table")
+        return Data
+
+api.add_resource(SIMUL, '/SIMULATEUR')
+
+#SIMULATEUR?compagnie=GTT.PA,OR.PA&weight2=0.5,0.5
 
 #BOUCLE
 if __name__ == "__main__":
