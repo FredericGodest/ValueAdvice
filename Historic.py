@@ -1,7 +1,6 @@
 import pandas as pd
 import yfinance as yf
 import numpy as np
-import matplotlib.pyplot as plt
 
 def DATA(Ticker_list):
     Ticker_list.append('^FCHI')
