@@ -552,7 +552,7 @@ a = input("Souhaites-tu tout mettre à jour ? (Y/N)")
 
 driver = webdriver.Chrome(PATH, options=options)
 
-for j in range(6, len(table)):  #len(table)
+for j in range(0, 7):  #len(table)
     print(table.loc[j, "Nom"])
     path = table.loc[j, "Adresse"]
 
@@ -582,7 +582,7 @@ for j in range(6, len(table)):  #len(table)
     table.loc[j, "Score Dividende"] = score2
 
     score3 = Score_Management(j)
-    score3 = table.loc[j, "Score management"]
+    table.loc[j, "Score management"] = score3
 
     score_final = (score * 2 + score2 + score3) / 4
     table.loc[j, "Final Score"] = score_final

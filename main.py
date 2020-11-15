@@ -59,7 +59,8 @@ table=scale(table)
 table=table.sort_values(by=['Final Score'],ascending=False)
 
 #General
-general=table.drop(["Marge Brute","Dette long terme / Rslt net" , "Chiffre d'affaire",	"Effet Lindi", "Marque", "Scalabilité", "Brevet", "Pricing Power", "Vision long terme","Fiabilité de la direction" ,"Evolution Rslt net %",	"Evolution Benef %" , "Evolution Marge %",	"Resultat net/CA",	"Charge/CA",	"Dividende",	"Payout Ratio",	"Evolution ROE",	"ROE",	"Evolution flux tréso",	"cours",	"rendement / 5 ans"], axis=1)
+#general=table.drop(["Marge Brute","Dette long terme / Rslt net" , "Chiffre d'affaire",	"Effet Lindi", "Marque", "Scalabilité", "Brevet", "Pricing Power", "Vision long terme","Fiabilité de la direction" ,"Evolution Rslt net %",	"Evolution Benef %" , "Evolution Marge %",	"Resultat net/CA",	"Charge/CA",	"Dividende",	"Payout Ratio",	"Evolution ROE",	"ROE",	"Evolution flux tréso",	"cours",	"rendement / 5 ans"], axis=1)
+general = table[["Nom", "secteur", "cours", "Score Value", "Score Dividende", "Score management" , "Final Score", "Repartition", "Eligibilité"]]
 
 class_table="table table-striped table-dark table-responsive"
 class_table2="table table-striped table-dark"
