@@ -13,7 +13,7 @@ def DATA(Ticker_list):
 
     return DataFrame
 
-def SIMULATEUR(Ticker_list, Weight_list, montant):
+def SIMULATEUR(Ticker_list, Weight_list, montant, start, end):
     Ticker_list.append('^FCHI')
     Ticker_list.append('^GSPC')
     Weight_list.append(1)
@@ -24,7 +24,7 @@ def SIMULATEUR(Ticker_list, Weight_list, montant):
 
     for i in range(0,len(DataFrame)):
         ticker_data = yf.Ticker(DataFrame['Ticker'][i])
-        data = ticker_data.history(start="2015-01-01", end="2020-11-11")["Close"]
+        data = ticker_data.history(start=start, end=end)["Close"]
         DataFrame_out[DataFrame['Ticker'][i]] = data * montant * DataFrame['Weight'][i] / data[0]
 
     for i in range(0, len(Ticker_list)-2):
@@ -40,10 +40,12 @@ def SIMULATEUR(Ticker_list, Weight_list, montant):
     return DataFrame_out
 
 
-# #Ticker_list = ["GTT.PA","OR.PA","RMS.PA"]
-# Weight_list = [0.33,0.33,0.33]
+# Ticker_list = ["FP.PA","RUI.PA","SAN.PA", "BN.PA","GTT.PA","AIR.PA","OR.PA","MC.PA"]
+# Weight_list = [0.18, 0.13, 0.13, 0.12, 0.19, 0.05, 0.06, 0.14]
 #
-# result = SIMULATEUR(Ticker_list, Weight_list)
+# start = "2014-11-11"
+# end = "2020-11-11"
+# result = SIMULATEUR(Ticker_list, Weight_list, 10000, start, end)
 #
 # rendement = (result["Wallet"][len(result)-1] / 10000 - 1) * 100
 # plt.plot(result["Wallet"], label="Portefeuille. Rendement = " + str(np.round(rendement, 2)) + "%")
@@ -56,5 +58,4 @@ def SIMULATEUR(Ticker_list, Weight_list, montant):
 # plt.legend()
 # plt.show()
 
-#print(result["^FCHI"][len(result)-1])
 
