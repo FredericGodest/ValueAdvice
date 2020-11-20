@@ -273,6 +273,13 @@ def Research(path,ticker):
     #Dette/Capitaux propre
     DETTE_Capitaux = np.mean(DETTE)/np.mean(CAPITAUX_PROPRE)
 
+    #PRIX_FUTUR
+    PER = 15
+    alpha = prog_BPA
+    beta = 0.10
+    prix_futur = PER * BPA * (1 + alpha)**10
+    Price = 0.75 * prix_futur/(1+beta)**10
+
     table_out = {"Capital" : [capital],
     "Chiffre d'affaire" : [Chiffre_Affaire],
     "Evolution CA %" : [prog_CA],
@@ -298,7 +305,8 @@ def Research(path,ticker):
     "ROA" : [ROA],
     "ROIC" : [ROIC],
     "EV/EBITDA" : [EV],
-    "dette / capitaux propre" : [DETTE_Capitaux]}
+    "dette / capitaux propre" : [DETTE_Capitaux],
+    "Prix Juste (Futur)" : [Price]}
 
     return table_out
 
@@ -497,6 +505,8 @@ def LoadingData(table,table_out):
     table.loc[j, "prog ROA"] = table_out["prog ROA"]
     table.loc[j, "dette /capitaux propre"] = table_out["dette / capitaux propre"]
 
+    table.loc[j, "Prix Juste (Futur)"] = table_out["Prix Juste (Futur)"]
+
     return table
 
 def Score_Management(j):
@@ -552,7 +562,7 @@ a = input("Souhaites-tu tout mettre à jour ? (Y/N)")
 
 driver = webdriver.Chrome(PATH, options=options)
 
-for j in range(0, 7):  #len(table)
+for j in range(0, len(table)):  #len(table)
     print(table.loc[j, "Nom"])
     path = table.loc[j, "Adresse"]
 
