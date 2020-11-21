@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import pickle
-from scipy import stats
+#from scipy import stats
 
 with open("picklesave",'rb') as f1:
     table=pickle.load(f1)

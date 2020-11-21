@@ -282,6 +282,7 @@ def Research(path,ticker):
 
     table_out = {"Capital" : [capital],
     "Chiffre d'affaire" : [Chiffre_Affaire],
+    "BPA" : [BPA],
     "Evolution CA %" : [prog_CA],
     "Evolution Rslt net %" :[prog_RN],
     "Evolution Benef %" : [prog_Benef],
@@ -476,6 +477,7 @@ def LoadingData(table,table_out):
     table.loc[j, "Charge/CA"] = table_out["Charge / CA"]
 
     table.loc[j, "Evolution BPA %"] = table_out["Evolution BPA %"]
+    table.loc[j, "BPA"] = table_out["BPA"]
     table.loc[j, "Evolution Dividende %"] = table_out["Evolution Dividende %"]
     if table.loc[j, "Eligibilité"] != "PEA":
         table.loc[j, "Dividende"] = np.asarray(table_out["Dividende"]) * 0.70
@@ -562,7 +564,7 @@ a = input("Souhaites-tu tout mettre à jour ? (Y/N)")
 
 driver = webdriver.Chrome(PATH, options=options)
 
-for j in range(0, len(table)):  #len(table)
+for j in range(59, len(table)):  #len(table)
     print(table.loc[j, "Nom"])
     path = table.loc[j, "Adresse"]
 
