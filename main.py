@@ -36,7 +36,7 @@ def scale(table):
     table["Score management"]=np.round(table["Score management"], 2)
     table["Score Dividende"]=np.round(table["Score Dividende"], 2)
     table["Final Score"]=np.round(table["Final Score"], 2)
-    #table["Cours Graham"]=np.round(table["Cours Graham"], 2)
+    table["Prix Juste (Futur)"]=np.round(table["Prix Juste (Futur)"], 2)
     table["Repartition"]=np.round(table["Repartition"], 2)
 
     return table
@@ -60,7 +60,7 @@ table=table.sort_values(by=['Final Score'],ascending=False)
 
 #General
 #general=table.drop(["Marge Brute","Dette long terme / Rslt net" , "Chiffre d'affaire",	"Effet Lindi", "Marque", "Scalabilité", "Brevet", "Pricing Power", "Vision long terme","Fiabilité de la direction" ,"Evolution Rslt net %",	"Evolution Benef %" , "Evolution Marge %",	"Resultat net/CA",	"Charge/CA",	"Dividende",	"Payout Ratio",	"Evolution ROE",	"ROE",	"Evolution flux tréso",	"cours",	"rendement / 5 ans"], axis=1)
-general = table[["Nom", "secteur", "cours", "Score Value", "Score Dividende", "Score management" , "Final Score", "Repartition", "Eligibilité"]]
+general = table[["Nom", "secteur", "cours", "Prix Juste (Futur)", "Score Value", "Score Dividende", "Score management" , "Final Score", "Repartition", "Eligibilité"]]
 
 class_table="table table-striped table-dark table-responsive"
 class_table2="table table-striped table-dark"
@@ -114,6 +114,10 @@ def Industrie():
 def Logiciel():
     logiciel = TransposeTable(table, 'Logiciel')
     return render_template('TempTable.html', tables=[logiciel.to_html(header=False, index=True, classes=class_table, justify="center")])
+
+@app.route('/Explication', methods=['GET'])
+def Explication():
+    return render_template('Explication.html')
 
 
 @app.route('/API', methods=['GET'])
