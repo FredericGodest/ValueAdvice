@@ -62,7 +62,7 @@ table=table.sort_values(by=['Final Score'],ascending=False)
 #general=table.drop(["Marge Brute","Dette long terme / Rslt net" , "Chiffre d'affaire",	"Effet Lindi", "Marque", "Scalabilité", "Brevet", "Pricing Power", "Vision long terme","Fiabilité de la direction" ,"Evolution Rslt net %",	"Evolution Benef %" , "Evolution Marge %",	"Resultat net/CA",	"Charge/CA",	"Dividende",	"Payout Ratio",	"Evolution ROE",	"ROE",	"Evolution flux tréso",	"cours",	"rendement / 5 ans"], axis=1)
 general = table[["Nom", "secteur", "cours", "Prix Juste (Futur)", "Score Value", "Score Dividende", "Score management" , "Final Score", "Repartition", "Eligibilité"]]
 
-class_table="table table-striped table-dark table-responsive"
+class_table="table card-table table-vcenter text-nowrap table-striped datatable"
 class_table2="table table-striped table-dark"
 
 app=Flask(__name__)
@@ -83,42 +83,50 @@ def General():
 @app.route('/Secteur/Energie', methods=['GET'])
 def Energie():
     energie = TransposeTable(table, 'Energie')
-    return render_template('TempTable.html', tables=[energie.to_html(header=False, index=True, classes=class_table, justify="center")])
+    return render_template('TempTable.html', title="Energie", tables=[energie.to_html(header=False, index=True, classes=class_table, justify="center")])
 
 @app.route('/Secteur/Pharma', methods=['GET'])
 def Pharma():
     pharma = TransposeTable(table, 'Pharma')
-    return render_template('TempTable.html', tables=[pharma.to_html(header=False, index=True, classes=class_table, justify="center")])
+    return render_template('TempTable.html', title="Pharmaceutique", tables=[pharma.to_html(header=False, index=True, classes=class_table, justify="center")])
 
 @app.route('/Secteur/Luxe', methods=['GET'])
 def Luxe():
     luxe = TransposeTable(table, 'Luxe')
-    return render_template('TempTable.html', tables=[luxe.to_html(header=False, index=True, classes=class_table,justify="center")])
+    return render_template('TempTable.html', title="Luxe", tables=[luxe.to_html(header=False, index=True, classes=class_table,justify="center")])
 
 @app.route('/Secteur/Aeronautique', methods=['GET'])
 def Aeronautique():
     aeronautique=TransposeTable(table, 'Aeronautique')
-    return render_template('TempTable.html', tables=[aeronautique.to_html(header=False, index=True, classes=class_table, justify="center")])
+    return render_template('TempTable.html', title="Aeronautique", tables=[aeronautique.to_html(header=False, index=True, classes=class_table, justify="center")])
 
 @app.route('/Secteur/Consommation', methods=['GET'])
 def Consommation():
     consommation = TransposeTable(table, 'Consommation')
-    return render_template('TempTable.html', tables=[consommation.to_html(header=False, index=True, classes=class_table, justify="center")])
+    return render_template('TempTable.html', title="Consommation", tables=[consommation.to_html(header=False, index=True, classes=class_table, justify="center")])
 
 @app.route('/Secteur/Industrie', methods=['GET'])
 def Industrie():
     industrie = TransposeTable(table, 'Industrie')
-    return render_template('TempTable.html', tables=[industrie.to_html(header=False, index=True, classes=class_table, justify="center")])
+    return render_template('TempTable.html', title="Industrie", tables=[industrie.to_html(header=False, index=True, classes=class_table, justify="center")])
 
 @app.route('/Secteur/Logiciel', methods=['GET'])
 def Logiciel():
     logiciel = TransposeTable(table, 'Logiciel')
-    return render_template('TempTable.html', tables=[logiciel.to_html(header=False, index=True, classes=class_table, justify="center")])
+    return render_template('TempTable.html', title="Logiciel", tables=[logiciel.to_html(header=False, index=True, classes=class_table, justify="center")])
 
-@app.route('/Explication', methods=['GET'])
-def Explication():
-    return render_template('Explication.html')
+@app.route('/Simulateur', methods=['GET'])
+def Simulateur():
+    return render_template('Simulateur.html')
 
+
+@app.route('/Documentation', methods=['GET'])
+def Documentation():
+    return render_template('Documentation.html')
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 @app.route('/API', methods=['GET'])
 @cross_origin()
