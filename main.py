@@ -7,6 +7,7 @@ from Historic import DATA, SIMULATEUR
 from flask_restful import Resource, request, Api
 
 
+
 # Fonction Perso
 def scale(table):
     # table["Capital"]=table["Capital"] / 1000000

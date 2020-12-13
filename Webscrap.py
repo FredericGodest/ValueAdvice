@@ -9,6 +9,9 @@ import numpy as np
 import pickle
 from wallstreet import Stock
 
+
+
+
 # A REMPLIR/MODIFIER
 PATH = "/Applications/chromedriver"  # SELENIUM PATH
 # path_excel=r'/Users/FredericGodest/Desktop/Finance/database.xlsx' #EXCEL PATH
@@ -301,12 +304,6 @@ def Research(path, ticker):
     # Dette/Capitaux propre
     DETTE_Capitaux = np.mean(DETTE) / np.mean(CAPITAUX_PROPRE)
 
-    # PRIX_FUTUR
-    PER = 15
-    alpha = prog_BPA
-    beta = 0.10
-    prix_futur = PER * BPA * (1 + alpha) ** 10
-    Price = 0.75 * prix_futur / (1 + beta) ** 10
 
     table_out = {"Capital": [capital],
                  "Chiffre d'affaire": [Chiffre_Affaire],
@@ -366,7 +363,7 @@ def Scoring(j):
 
     # dette/capitaux propre
     rank += 1
-    if table.loc[j, "dette / capitaux propre"] < 0.8:
+    if table.loc[j, "dette /capitaux propre"] < 0.8:
         point += 1
 
     # Chiffre d'affaire
@@ -616,6 +613,15 @@ for j in range(0, len(table)):  # len(table)
 
             # sauvegarde
             table.to_excel(path_excel, sheet_name='Feuil1')
+
+    #Prix futur
+    PER = 12
+    alpha = table["Evolution BPA %"][j]
+    BPA = table["BPA"][j]
+    beta = 0.10
+    prix_futur = PER * BPA * (1 + alpha) ** 10
+    Price = 0.75 * prix_futur / (1 + beta) ** 10
+    table.loc[j, "Prix Juste (Futur)"] = Price
 
     # Etape de scoring
     score = Scoring(j)
