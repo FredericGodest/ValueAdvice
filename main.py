@@ -51,7 +51,7 @@ def TransposeTable(table, secteur):
 with open("picklesave", 'rb') as f1:
     table = pickle.load(f1)
 table = table.reset_index()
-table = table.drop(['Index', 'Adresse'], axis=1)
+table = table.drop(['Index', 'Adresse', 'dette/capitaux propre', 'dette / capitaux propre'], axis=1)
 table = scale(table)
 table = table.sort_values(by=['Final Score'], ascending=False)
 
@@ -67,6 +67,7 @@ aeronautique = TransposeTable(table, 'Aeronautique')
 consommation = TransposeTable(table, 'Consommation')
 industrie = TransposeTable(table, 'Industrie')
 logiciel = TransposeTable(table, 'Logiciel')
+banque = TransposeTable(table, 'Banque et Assurance')
 
 class_table = "table card-table table-vcenter text-nowrap table-striped datatable"
 
@@ -94,6 +95,10 @@ def Energie():
 @app.route('/Secteur/Pharma', methods=['GET'])
 def Pharma():
     return render_template('pages/TempTable.html', title="Pharmaceutique", tables=[pharma.to_html(header=False, index=True, classes=class_table, justify="center")])
+
+@app.route('/Secteur/Banque', methods=['GET'])
+def Banque():
+    return render_template('pages/TempTable.html', title="Banque et Assurance", tables=[banque.to_html(header=False, index=True, classes=class_table, justify="center")])
 
 
 @app.route('/Secteur/Luxe', methods=['GET'])
