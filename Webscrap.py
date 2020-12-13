@@ -353,7 +353,7 @@ def Scoring(j):
 
     # prog ROA
     rank += 1
-    if table.loc[j, "ROA"] >= -0.05:
+    if table.loc[j, "prog ROA"] >= -0.05:
         point += 1
 
     # EV/EBITDA

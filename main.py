@@ -70,7 +70,7 @@ industrie = TransposeTable(table, 'Industrie')
 logiciel = TransposeTable(table, 'Logiciel')
 banque = TransposeTable(table, 'Banque et Assurance')
 
-class_table = "table card-table table-vcenter text-nowrap table-striped datatable"
+class_table = "table card-table table-vcenter text-nowrap table-striped datatable header-fixed"
 
 app = Flask(__name__)
 api = Api(app)
