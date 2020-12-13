@@ -6,8 +6,6 @@ from Data import Update
 from Historic import DATA, SIMULATEUR
 from flask_restful import Resource, request, Api
 
-
-
 # Fonction Perso
 def scale(table):
     # table["Capital"]=table["Capital"] / 1000000
@@ -33,6 +31,10 @@ def scale(table):
     table["Final Score"] = np.round(table["Final Score"], 2)
     table["Prix Juste (Futur)"] = np.round(table["Prix Juste (Futur)"], 2)
     table["Repartition"] = np.round(table["Repartition"], 2)
+    table["dette /capitaux propre"] = np.round(table["dette /capitaux propre"] * 100, 2)
+    table["ROIC"] = np.round(table["ROIC"]*100 , 2)
+    table["prog ROA"] = np.round(table["prog ROA"] * 100, 2)
+    table["ROA"] = np.round(table["ROA"] * 100, 2)
 
     return table
 
@@ -43,17 +45,16 @@ def TransposeTable(table, secteur):
     _table = _table.drop(['secteur'], axis=1)
     _table = _table.T
     _table = _table.reindex()
-
     return _table
 
 
 # chargement base de données
 with open("picklesave", 'rb') as f1:
     table = pickle.load(f1)
-table = table.reset_index()
-table = table.drop(['Index', 'Adresse', 'dette/capitaux propre', 'dette / capitaux propre'], axis=1)
-table = scale(table)
-table = table.sort_values(by=['Final Score'], ascending=False)
+    table = table.reset_index()
+    table = table.drop(['Index', 'Adresse', 'dette/capitaux propre', 'dette / capitaux propre', 'Cours Graham'], axis=1)
+    table = scale(table)
+    table = table.sort_values(by=['Final Score'], ascending=False)
 
 # General
 # general=table.drop(["Marge Brute","Dette long terme / Rslt net" , "Chiffre d'affaire",	"Effet Lindi", "Marque", "Scalabilité", "Brevet", "Pricing Power", "Vision long terme","Fiabilité de la direction" ,"Evolution Rslt net %",	"Evolution Benef %" , "Evolution Marge %",	"Resultat net/CA",	"Charge/CA",	"Dividende",	"Payout Ratio",	"Evolution ROE",	"ROE",	"Evolution flux tréso",	"cours",	"rendement / 5 ans"], axis=1)
@@ -81,16 +82,13 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 def Home():
     return render_template('pages/Home.html')
 
-
 @app.route('/General', methods=['GET'])
 def General():
     return render_template('pages/TempTable.html', title="Classement Général", tables=[general.to_html(header=True, classes=class_table, index=False, justify="center")])
 
-
 @app.route('/Secteur/Energie', methods=['GET'])
 def Energie():
     return render_template('pages/TempTable.html', title="Energie", tables=[energie.to_html(header=False, index=True, classes=class_table, justify="center")])
-
 
 @app.route('/Secteur/Pharma', methods=['GET'])
 def Pharma():
@@ -100,47 +98,38 @@ def Pharma():
 def Banque():
     return render_template('pages/TempTable.html', title="Banque et Assurance", tables=[banque.to_html(header=False, index=True, classes=class_table, justify="center")])
 
-
 @app.route('/Secteur/Luxe', methods=['GET'])
 def Luxe():
     return render_template('pages/TempTable.html', title="Luxe", tables=[luxe.to_html(header=False, index=True, classes=class_table, justify="center")])
-
 
 @app.route('/Secteur/Aeronautique', methods=['GET'])
 def Aeronautique():
     return render_template('pages/TempTable.html', title="Aeronautique", tables=[aeronautique.to_html(header=False, index=True, classes=class_table, justify="center")])
 
-
 @app.route('/Secteur/Consommation', methods=['GET'])
 def Consommation():
     return render_template('pages/TempTable.html', title="Consommation", tables=[consommation.to_html(header=False, index=True, classes=class_table, justify="center")])
-
 
 @app.route('/Secteur/Industrie', methods=['GET'])
 def Industrie():
     return render_template('pages/TempTable.html', title="Industrie", tables=[industrie.to_html(header=False, index=True, classes=class_table, justify="center")])
 
-
 @app.route('/Secteur/Logiciel', methods=['GET'])
 def Logiciel():
     return render_template('pages/TempTable.html', title="Logiciel", tables=[logiciel.to_html(header=False, index=True, classes=class_table, justify="center")])
-
 
 @app.route('/Simulateur', methods=['GET'])
 def Simulateur():
     return render_template('pages/Simulateur.html')
 
-
 @app.route('/Documentation', methods=['GET'])
 def Documentation():
     return render_template('pages/Documentation.html')
-
 
 # noinspection PyUnusedLocal
 @app.errorhandler(404)
 def page_not_found():
     return render_template('pages/404.html'), 404
-
 
 @app.route('/API', methods=['GET'])
 @cross_origin()
